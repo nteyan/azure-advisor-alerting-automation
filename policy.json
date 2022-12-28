@@ -44,7 +44,8 @@
                   ]
                 }
               ]
-            },
+            }
+           },
           "equals": 2
         },
         "deploymentScope": "subscription",
