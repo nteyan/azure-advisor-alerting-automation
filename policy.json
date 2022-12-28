@@ -1,0 +1,179 @@
+{
+  "mode": "All",
+  "policyRule": {
+    "if": {
+      "field": "type",
+      "equals": "Microsoft.Resources/subscriptions"
+    },
+    "then": {
+      "effect": "[parameters('effect')]",
+      "details": {
+        "type": "Microsoft.Insights/ActivityLogAlerts",
+        "roleDefinitionIds": [
+          "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+        ],
+        "resourceGroupName": "[parameters('resourceGroupName')]",
+        "name": "[parameters('activityLogAlertName')]",
+        "existenceCondition": {
+          "count": {
+            "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*]",
+            "where": {
+              "anyOf": [
+                {
+                  "allOf": [
+                    {
+                      "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].field",
+                      "equals": "category"
+                    },
+                    {
+                      "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].equals",
+                      "equals": "Recommendation"
+                    },
+                    {
+                      "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].field",
+                      "equals": "operationName"
+                    },
+                    {
+                      "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].equals",
+                      "equals": "Microsoft.Advisor/recommendations/available/action"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "equals": 2
+        },
+        "deploymentScope": "subscription",
+        "deployment": {
+          "location": "westeurope",
+          "properties": {
+            "mode": "incremental",
+            "template": {
+              "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "parameters": {
+                "resourceGroupName": {
+                  "type": "string"
+                },
+                "actionGroupId": {
+                  "type": "string"
+                },
+                "activityLogAlertName": {
+                  "type": "string"
+                }
+              },
+              "resources": [
+                {
+                  "type": "Microsoft.Resources/resourceGroups",
+                  "apiVersion": "2020-10-01",
+                  "name": "[parameters('resourceGroupName')]",
+                  "location": "westeurope",
+                  "properties": {}
+                },
+                {
+                  "type": "Microsoft.Resources/deployments",
+                  "apiVersion": "2020-10-01",
+                  "name": "alertAndActionGroupDeployment",
+                  "resourceGroup": "[parameters('resourceGroupName')]",
+                  "dependsOn": [
+                    "[resourceId('Microsoft.Resources/resourceGroups/', parameters('resourceGroupName'))]"
+                  ],
+                  "properties": {
+                    "mode": "Incremental",
+                    "template": {
+                      "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                      "contentVersion": "1.0.0.0",
+                      "resources": [
+                        {
+                          "type": "Microsoft.Insights/activityLogAlerts",
+                          "apiVersion": "2020-10-01",
+                          "name": "[parameters('activityLogAlertName')]",
+                          "location": "Global",
+                          "properties": {
+                            "enabled": true,
+                            "scopes": [
+                              "[subscription().id]"
+                            ],
+                            "condition": {
+                              "allOf": [
+                                {
+                                  "field": "category",
+                                  "equals": "Recommendation"
+                                },
+                                {
+                                  "field": "operationName",
+                                  "equals": "Microsoft.Advisor/recommendations/available/action"
+                                }
+                              ]
+                            },
+                            "actions": {
+                              "actionGroups": [
+                                {
+                                  "actionGroupId": "[parameters('actionGroupId')]"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "parameters": {
+              "resourceGroupName": {
+                "value": "[parameters('resourceGroupName')]"
+              },
+              "actionGroupId": {
+                "value": "[parameters('actionGroupId')]"
+              },
+              "activityLogAlertName": {
+                "value": "[parameters('activityLogAlertName')]"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "resourceGroupName": {
+      "type": "String",
+      "metadata": {
+        "displayName": "resourceGroupName",
+        "description": null
+      }
+    },
+    "actionGroupId": {
+      "type": "String",
+      "metadata": {
+        "displayName": "actionGroupId",
+        "description": "Action Group Resource ID (/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroupName>/providers/microsoft.insights/actionGroups/<ActionGroupName>)"
+      },
+      "defaultValue": "/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroupName>/providers/microsoft.insights/actionGroups/<ActionGroupName>"
+    },
+    "activityLogAlertName": {
+      "type": "String",
+      "metadata": {
+        "displayName": "activityLogAlertName",
+        "description": "Name for the Activity log alert."
+      },
+      "defaultValue": "advisorAlert"
+    },
+    "effect": {
+      "type": "String",
+      "metadata": {
+        "displayName": "Effect",
+        "description": "Enable or disable the execution of the policy"
+      },
+      "allowedValues": [
+        "DeployIfNotExists",
+        "AuditIfNotExists",
+        "Disabled"
+      ],
+      "defaultValue": "DeployIfNotExists"
+    }
+  }
+}
