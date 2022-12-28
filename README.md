@@ -29,6 +29,6 @@ If you do not intend to take immediate action on a recommendation, you can postp
 ##  About the Policy
 1. To deploy this policy, you have to create an Action Group (the only requierement for this resource is to be deployed in the same tenant)
 2. Once deployed, you will have to copy the resourceId. It should be something like this :
-/subscriptions/<SubscriptionID>/resourceGroups/<ResourceGroupName>/providers/microsoft.insights/actionGroups/<ActionGroupName>
+/subscriptions/<<SubscriptionID>>/resourceGroups/<ResourceGroupName>/providers/microsoft.insights/actionGroups/<ActionGroupName>
 3. Copy/Paste the content of the [policy.json](https://github.com/nteyan/azure-advisor-alerting-automation/blob/main/policy.json) and create a new Policy Definition. The location for this policy definition can be a management group or a subscription. The "Role definitions" should be Contributor to allow the policy to create the resources.
 4. Once deployed, Assign this policy to a management group or a subscription, fill the "resourceGroupName" and "actionGroupId" in the Parameters tab, don't forget to change the System assigned identity to your region and then select "Review + Create"
