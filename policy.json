@@ -28,7 +28,11 @@
                     {
                       "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].equals",
                       "equals": "Recommendation"
-                    },
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
                     {
                       "field": "Microsoft.Insights/ActivityLogAlerts/condition.allOf[*].field",
                       "equals": "operationName"
@@ -40,8 +44,7 @@
                   ]
                 }
               ]
-            }
-          },
+            },
           "equals": 2
         },
         "deploymentScope": "subscription",
