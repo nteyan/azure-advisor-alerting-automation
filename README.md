@@ -7,7 +7,7 @@ With Advisor, you can:
 - Improve the performance, security, and reliability of your resources, as you identify opportunities to reduce your overall Azure spend.
 - Get recommendations with proposed actions inline.
 
-You can access Advisor through the Azure portal. Sign in to the portal, locate Advisor in the navigation menu, or search for it in the All services menu.
+You can access Advisor through the [Azure portal](https://aka.ms/azureadvisordashboard). Sign in to the portal, locate Advisor in the navigation menu, or search for it in the All services menu.
 
 The Advisor dashboard displays personalized recommendations for all your subscriptions. You can apply filters to display recommendations for specific subscriptions and resource types. The recommendations are divided into five categories:
 - Reliability (formerly called High Availability): To ensure and improve the continuity of your business-critical applications. For more information, see Advisor Reliability recommendations.
